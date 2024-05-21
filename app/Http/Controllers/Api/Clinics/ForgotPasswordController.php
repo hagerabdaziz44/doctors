@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Api\Clinics;
+
+use App\Http\Controllers\Controller;
+use App\Mail\SendCodeResetPassword;
+use App\Mail\UserSendCodeResetPassword;
+use App\Models\ResetCodePassword;
+use App\Models\UserResetCodePassword;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+
+class ForgotPasswordController extends Controller
+{
+     public function forget(Request $request)
+    {
+        $validator= Validator::make($request->all(),[
+            'email' => 'required|email|exists:clinics',
+        ]
+        ,[
+            'email.required'=>trans('auth.email.register'),
+
+           'email.exists'=>trans('auth.login.exists')
+         ]);
+        if ($validator->fails()) {
+        return response()->json(['message'=>$validator->errors()->first()]);
+
+    }
+
+        // Delete all old code that user send before.
+        ResetCodePassword::where('email', $request->email)->delete();
+
+        // Generate random code
+        $code = mt_rand(100000, 999999);
+
+
+        // Create a new code
+        $codeData = ResetCodePassword::create(['email'=>$request->email,
+        'code'=>$code]);
+
+        Mail::to($request->email)->send(new SendCodeResetPassword($code));
+
+
+
+        return response(['message' => trans('passwords.sent')], 200);
+
+    }
+    
+    
+    
+     public function user_forget(Request $request)
+    {
+        $validator= Validator::make($request->all(),[
+            'email' => 'required|email|exists:patients',
+        ]
+        ,[
+            'email.required'=>trans('auth.email.register'),
+
+           'email.exists'=>trans('auth.login.exists')
+         ]);
+        if ($validator->fails()) {
+        return response()->json(['message'=>$validator->errors()->first()]);
+
+    }
+
+        // Delete all old code that user send before.
+        UserResetCodePassword::where('email', $request->email)->delete();
+
+        // Generate random code
+        $code = mt_rand(100000, 999999);
+
+
+        // Create a new code
+        $codeData = UserResetCodePassword::create(['email'=>$request->email,
+        'code'=>$code]);
+
+        Mail::to($request->email)->send(new UserSendCodeResetPassword($code));
+
+
+
+        return response(['message' => trans('passwords.sent')], 200);
+
+    }
+}
