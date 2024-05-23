@@ -50,7 +50,7 @@ class PatientController extends Controller
             'phone' => $request->phone,
             
             'photo'=>$fillname,
-            'password'=>$request->password,
+            'password' => Hash::make($request->password),
         ]);
          DB::commit();
         return redirect()->route('admin.patients.index')->with(['success' => 'تم اضافة العميل بنجاح']);

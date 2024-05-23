@@ -46,7 +46,7 @@ class ClinicController extends Controller
         $days=Day::get();
       
         // return $spectialization;
-        return view('dashboard.clinics.create', compact('s', 'insurances','days','times'));
+        return view('dashboard.clinics.create', compact('s', 'insurances','days'));
     }
     public function store(Request $request)
     {

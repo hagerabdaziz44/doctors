@@ -21,9 +21,7 @@ trait AuthTrait
         if ($request->type == 'admin') {
             return redirect()->intended(RouteServiceProvider::ADMIN);
         }
-//        else {
-//            return redirect()->intended(RouteServiceProvider::ADMIN);
-//        }
+  
     }
 
 }
